@@ -1,19 +1,13 @@
+use CompletionState::*;
+use Direction::*;
+use Event::*;
 
 fn main() {
-    let events = vec![
-        Event::Click,
-        Event::CycleCompleted,
-        Event::Click,
-        Event::Click,
-        Event::Click,
-        Event::Click,
-        Event::Click,
-        Event::CycleCompleted,
-    ];
+    let events = vec![Click, CycleCompleted, Click, Click, Click, Click, Click, CycleCompleted];
 
     let mut state = State {
-        completion_state: CompletionState::Complete,
-        direction: Direction::Closing,
+        completion_state: Complete,
+        direction: Closing,
     };
 
     for event in events {
@@ -37,12 +31,9 @@ impl State {
 
     fn transition(&self, event: Event) -> State {
         match (self.completion_state.clone(), self.direction.clone(), event) {
-            (CompletionState::InProgress, direction, Event::Click) =>
-                State::new(CompletionState::Stopped, direction),
-            (_, direction, Event::Click) =>
-                State::new(CompletionState::InProgress, direction.flip()),
-            (CompletionState::InProgress, direction, Event::CycleCompleted) =>
-                State::new(CompletionState::Complete, direction),
+            (InProgress, direction, Click         ) => State::new(Stopped   , direction),
+            (InProgress, direction, CycleCompleted) => State::new(Complete  , direction),
+            (_         , direction, Click         ) => State::new(InProgress, direction.flip()),
             _ => panic!("Invalid input"),
         }
     }
@@ -64,8 +55,8 @@ enum Direction {
 impl Direction {
     fn flip(&self) -> Direction {
         match *self {
-            Direction::Opening => Direction::Closing,
-            Direction::Closing => Direction::Opening,
+            Opening => Closing,
+            Closing => Opening,
         }
     }
 }
