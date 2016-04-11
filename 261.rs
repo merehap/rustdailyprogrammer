@@ -24,46 +24,23 @@ fn main() {
 }
 
 fn verify_magic_square(magic_number: u8, square: &Vec<Vec<u8>>) -> bool {
-    let len = square.len();
-    for row in 0..len {
-        let mut sum = 0;
-        for col in 0..len {
-            sum += square[row][col]; 
+    let mut top_diag_sum = 0;
+    let mut bot_diag_sum = 0;
+    for i in 0..square.len() {
+        let mut row_sum = 0;
+        let mut col_sum = 0;
+        for j in 0..square.len() {
+            row_sum += square[i][j]; 
+            col_sum += square[j][i];
         }
 
-        if sum != magic_number {
+        if col_sum != magic_number || row_sum != magic_number {
             return false;
         }
+
+        top_diag_sum += square[i][i];    
+        bot_diag_sum += square[square.len() - i - 1][i];    
     }
 
-    for col in 0..len {
-        let mut sum = 0;
-        for row in 0..len {
-            sum += square[row][col];        
-        }
-
-        if sum != magic_number {
-            return false;
-        }
-    }
-
-    let mut sum = 0;
-    for index in 0..len {
-        sum += square[index][index];    
-    }
-
-    if sum != magic_number {
-        return false;
-    }
-
-    sum = 0;
-    for index in 0..len {
-        sum += square[len - index - 1][index];    
-    }
-
-    if sum != magic_number {
-        return false;
-    }
-
-    true
+    top_diag_sum == magic_number && bot_diag_sum == magic_number
 }
